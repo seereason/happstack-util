@@ -3,10 +3,10 @@ module Happstack.Util.Daemonize where
 import System.Directory
 import System.Environment
 import System.Exit
-import System.Time
 import Control.Concurrent
 import Control.Exception.Extensible as E
 import Control.Monad.Error
+import Data.Time (getCurrentTime, diffUTCTime)
 import Happstack.Crypto.SHA1
 import Happstack.Util.Common
 
@@ -22,13 +22,12 @@ import Happstack.Util.Common
 daemonize :: FilePath -> IO a -> IO a
 daemonize binarylocation main = 
     do
-    startTime <- getClockTime
+    startTime <- getCurrentTime
     tid1 <- exitIfAlreadyRunning startTime
     mId <- myThreadId
     tid2 <- appCheck binarylocation startTime mId
     main `finally` mapM killThread [tid1,tid2]
     where 
-    seconds n = noTimeDiff { tdSec = n }
     exitIfAlreadyRunning startTime = 
         do
         uniqueId <- getDaemonizedId
@@ -37,7 +36,7 @@ daemonize binarylocation main =
         when fe $ 
              do 
              daemonTime <- getModificationTime name         
-             when (diffClockTimes startTime daemonTime < seconds 2) $
+             when (diffUTCTime startTime daemonTime < fromIntegral (2 :: Int)) $
                   exitWith ExitSuccess  >> return ()
         periodic (repeat 1) $ writeFile name "daemon" 
 

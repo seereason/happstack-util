@@ -203,9 +203,9 @@ Added by Alex
 >             23, 24, 25, 26, 27, 28, 27, 28, 29, 30, 31,  0]
 
 > s_box :: [[Word8]] -> Bits6 -> Bits4
-> s_box s [a,b,c,d,e,f] = to_bool 4 $ (s !! row) !! col
+> s_box s [a,b,c,d,e,f] = to_bool (4 :: Int) $ (s !! row) !! col
 >  where row = sum $ zipWith numericise [a,f]     [1, 0]
->        col = sum $ zipWith numericise [b,c,d,e] [3, 2, 1, 0]
+>        col = sum $ zipWith numericise [b,c,d,e] ([3, 2, 1, 0] :: [Int])
 >        numericise = (\x y -> if x then 2^y else 0)
 >        to_bool 0 _ = []
 >        to_bool n i = ((i .&. 8) == 8):to_bool (n-1) (shiftL i 1)

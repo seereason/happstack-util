@@ -11,6 +11,7 @@ module Happstack.Util.Common where
 
 import System.Log.Logger
 import Control.Concurrent
+import Control.Exception (catch)
 import Control.Monad
 import qualified Data.ByteString.Char8 as P
 import Data.Char
@@ -101,7 +102,7 @@ split f s = (left,right)
 mbReadFile :: a -> (String -> a) -> FilePath -> IO a
 mbReadFile noth just path  = 
 	(do text <- readFile path;return $ just text)
-	`catch` \err -> if isDoesNotExistError err then return noth else ioError err
+	`catch` \ err -> if isDoesNotExistError err then return noth else ioError err
 
 mapFst :: (a -> b) -> [(a,x)] -> [(b,x)]
 mapFst = map . first

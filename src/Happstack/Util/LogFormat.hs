@@ -3,7 +3,11 @@ module Happstack.Util.LogFormat
   , formatRequestCombined
   ) where
 
+#if MIN_VERSION_time(1,5,0)
+import Data.Time (defaultTimeLocale)
+#else
 import System.Locale (defaultTimeLocale)
+#endif
 import Data.Time.Format (FormatTime(..), formatTime)
 
 -- | Format the time as describe in the Apache combined log format.

@@ -16,10 +16,10 @@ module Happstack.Util.AutoBuild (
 import Control.Concurrent (forkIO, threadDelay)
 import Control.Concurrent.MVar (MVar, newEmptyMVar, putMVar, takeMVar)
 import Control.Exception (bracket)
+import Data.Time.Clock (UTCTime)
 import System.Directory (getModificationTime)
 import System.Exit (ExitCode(..), exitFailure)
 import System.Process
-import System.Time (ClockTime)
 import System.IO
 
 -- | Functionality for the autoBuild tool.
@@ -43,7 +43,7 @@ autoBuild buildCmd binPath binArgs = do
             exitFailure
 
 -- builds the program
-builder :: MVar ProcessHandle -> String -> FilePath -> ClockTime -> IO ()
+builder :: MVar ProcessHandle -> String -> FilePath -> UTCTime -> IO ()
 builder mph buildCmd binPath lastMod = do
     -- add a delay between build attempts (5 seconds)
     threadDelay 5000000
